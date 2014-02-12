@@ -1,0 +1,23 @@
+<html>
+<body bgcolor="#000" style="margin:0;padding:0">
+<svg>
+<circle id="circle" fill='rgb(17,17,17)' cx=200 cy=200 r=150 />
+</svg>
+<script>
+animate = function(period, thing, attr, fun) {
+  return setInterval(function(){
+    thing.setAttribute(attr, fun(thing))},
+    period)
+}
+animateCX = function(circle){
+  var circleWidth = circle.getAttribute('r')
+  var middle = window.innerWidth / 2
+  var a = middle - circleWidth
+  var x = Math.sin(+(new Date())/1000)*a + middle
+  return x
+}
+circle = document.getElementById('circle')
+a = animate(20, circle, 'cx', animateCX)
+</script>
+</body>
+</html>
