@@ -31,9 +31,9 @@ s = animate(50, subtitle, 'y', animateSubTitle)
 darken = function(thing) {
   var fill = thing.getAttribute('fill')
   var triple = fill.match(/\d+/g)
-  var r = triple[0]
-  var g = triple[1]
-  var b = triple[2]
+  var r = +triple[0]
+  var g = +triple[1]
+  var b = +triple[2]
   // 9,9,9 -> 9,9,8 -> 8,9,8 -> 8,8,8
   if(0) {
   } else if(b >= r && b >= g) {
