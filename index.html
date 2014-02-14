@@ -28,14 +28,31 @@ animateSubTitle = function(subtitle) {
 subtitle = document.getElementById('subtitle')
 s = animate(50, subtitle, 'y', animateSubTitle)
 
+minOffset = function(r, g, b) {
+  // Convert RGB representation to:
+  // (m + ro, m + bo, m + go) where each of
+  // ro, bo, go are non-negative. If possible,
+  // ro == bo == go == 0 is avoided by decrementing m.
+  // returns a structure with .m .r .g .b properties.
+  var res = {}
+  res.m = Math.min(r, g, b)
+  if(res.m == Math.max(r, g, b)) {
+    res.m -= 1
+  }
+  res.r = r - res.m
+  res.g = g - res.m
+  res.b = b - res.m
+  return res
+}
+
 darken = function(thing) {
   var fill = thing.getAttribute('fill')
   var triple = fill.match(/\d+/g)
   var r = +triple[0]
   var g = +triple[1]
   var b = +triple[2]
-  var m = Math.min(r,g,b)
-  var d = Math.max(r,g,b) - m
+  var col = minOffset(r,g,b)
+  var d = Math.max(r,g,b) - col.m
   // 9,9,9 -> 9,9,8 -> 8,9,8 -> 8,8,8
   if(d > 1) {
     // RGB values not near each other, just reduce the largest one.
@@ -49,21 +66,14 @@ darken = function(thing) {
     }
   } else {
     // RGB all within 1 of each other. Pick the next darkest triple.
-    // Represent as strictly positive offsets from m.
-    if(d == 0) {
-      m -= 1
-    }
-    var ro = r - m
-    var go = g - m
-    var bo = b - m
-    var x = 4*go+2*ro+1*bo
+    var x = 4*col.g+2*col.r+1*col.b
     x -= 1
-    go = (x & 4) >> 2
-    ro = (x & 2) >> 1
-    bo = (x & 1)
-    r = m + ro
-    g = m + go
-    b = m + bo
+    var go = (x & 4) >> 2
+    var ro = (x & 2) >> 1
+    var bo = (x & 1)
+    r = col.m + ro
+    g = col.m + go
+    b = col.m + bo
   }
   fill = "rgb(" + r + "," + g + "," + b + ")"
   thing.setAttribute('fill', fill)
